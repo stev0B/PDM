@@ -1,0 +1,241 @@
+<template name="projectDetail">
+
+<!--Display or Edit Mode Control -->
+{{#unless editMode}}
+<button type="button" class="btn btn-primary" disabled="disabled">Display</button>
+<button type="button" class="btn btn-primary" data-action="task/Edit">Edit</button>
+{{/unless}}
+
+{{#if editMode}}
+<button type="button" class="btn btn-primary" data-action="task/Display">Display</button>
+<button type="button" class="btn btn-primary" disabled="disabled">Edit</button>
+{{/if}}    
+
+<!--Project Header and Project Scoping Information -->
+	
+	<section>
+	{{#unless editMode}}    
+		<h3>{{name}}</h3><br>
+		<div class="row">
+  			<div class="col-md-8"><span class= "text-justify">{{description}}</span></div>
+  			<div class="col-md-4">Status: {{status}}</div>
+		</div>
+		<p>Division: {{division}}</p>
+		<p>Scope Date: {{formatDate scopeDate}}</p>
+		<p>Project Team: {{projectTeamMembers}}</p>
+		<p>Overall Timeline - Start of Ship: </p>
+		<p>Targeted Date - Materials and UPCs: </p>
+		<p>Targeted Date - Spec and Recipe Release: </p>
+		<p>Actual Date - Materials and UPCs: </p>
+		<p>Actual Date - Spec and Recipe Release: </p>
+
+	{{/unless}}
+
+	{{#if editMode}}
+	  	{{#autoForm collection="ProjectList" doc=this id="updateProjectForm" type="update"}}
+		  <fieldset>
+		  <div class="row">
+		  	<div class="col-md-4">
+		  		<label>Project Name</label>
+		    	{{> afFieldInput name="name" trueLabel="true"}}
+		    </div>
+		    <div class="col-md-4">
+		  		<label>Division</label>
+		    	{{> afFieldInput name="division" options="allowed"}}
+		    </div>
+		    <div class="col-md-4">
+		  		<label>Status</label>
+		    	    {{> afFieldInput name="status"}}
+		    </div>
+		   </div>
+		   <div class= "row">
+		   		<div class="col-md-4">
+		   			<label>Project Team Members</label>
+		   			{{> afFieldInput name="projectTeamMembers" options="allowed"}}
+		   		</div>
+		   	</div>
+		    <div>
+		      <button type="submit" class="btn btn-primary">Save</button>
+		    </div>
+		  </fieldset>
+  		{{/autoForm}}
+  	{{/if}}
+
+	</section>
+	<hr />
+	
+	<section>
+	<h3> Project Scoping </h3>
+	<!--Q1 Display-->
+	{{#unless editMode}}    
+			<div class= "row">
+			<div class="col-md-12">Q1</div> <hr />
+			   		<div class="col-md-6 ">
+			   			<p>What is the project’s business intent/opportunity (consumer need, global distribution, etc.)?  Or, what problem is the business
+			   			trying to solve with this project?  </p>
+						<p>What is the technical or business goal? How will this be achieved? (i.e., new products, line extensions, cost savings?)
+						</p>
+					</div>
+					<div class= "row">
+						<div class="col-md-6">
+							{{#each scopeBizIntent}}
+							<div class="row">
+								<div class="col-md-12"> <p>{{this.text}} </p> </div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<small>{{formatDate this.updatedAt}}</small>
+								{{#if followUp}}
+									<i class="fa fa-bookmark fa-lg"></i>
+								{{/if}}
+								</div>
+							</div>
+							<hr />
+							{{/each}}
+						</div>
+					</div>
+			</div>
+
+			<!--Q2 Display-->
+			<div class= "row">
+			<div class="col-md-12">Q2</div> <hr />
+			   		<div class="col-md-6 ">
+			   			<p>What are the prerequisites or dependencies that must be considered when evaluating the success of the project, aside from profitability, scheduling, etc.?  (For example, must we use only existing components, must we use a certain copacker?)
+			   			</p>
+						<p>What factors would cause this project to be stopped?
+						</p>
+					</div>
+					<div class= "row">
+						<div class="col-md-6">
+							{{#each scopePreReq}}
+							<div class="row">
+								<div class="col-md-12"> <p>{{this.text}} </p> </div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<small>{{formatDate this.updatedAt}}</small>
+								{{#if followUp}}
+									<i class="fa fa-bookmark fa-lg"></i>
+								{{/if}}
+								</div>
+							</div>
+							<hr />
+							{{/each}}
+						</div>
+					</div>
+			</div>
+	{{/unless}}
+
+	{{#if editMode}}
+	  	{{#autoForm collection="ProjectList" doc=this id="updateProjectForm" type="update" }}
+		  <fieldset>
+		   	<div class= "row">
+					<div class="col-md-6">
+			   			<p>What is the project’s business intent/opportunity (consumer need, global distribution, etc.)?  Or, what problem is the business
+			   			trying to solve with this project?  </p>
+						<p>What is the technical or business goal? How will this be achieved? (i.e., new products, line extensions, cost savings?)
+						</p>
+					</div>
+				<div class="col-md-6">
+				{{> afArrayField name="scopeBizIntent" rows=3}}
+				</div>
+			</div>
+		    <div class= "row">
+			   	<div class="col-md-6 ">
+			   		<p>What are the prerequisites or dependencies that must be considered when evaluating the success of the project, aside from profitability, scheduling, etc.?  (For example, must we use only existing components, must we use a certain copacker?)
+			  		</p>
+					<p>What factors would cause this project to be stopped?
+					</p>
+				</div>
+				<div class="col-md-6">
+				{{> afArrayField name="scopePreReq" rows=3}}
+				</div>
+			</div>
+		    <div>
+		      <button type="submit" class="btn btn-primary">Save</button>
+		    </div>
+		  </fieldset>
+  		{{/autoForm}}
+  	{{/if}}
+
+
+	<hr />
+	</section>
+
+	<!-- Project Materials Assigned w/ UPCs -->
+	<section>
+			<h3> Materials / UPCs </h3>
+			{{#if editMode}}
+				{{> upload}}
+				{{> addMaterial}}
+				{{> updateMaterial}}
+			{{/if}}
+			<div>
+			<table class="table">
+			<thead>
+				<tr>
+					<th>Material</th>
+					<th>Description</th>
+					<th>CUST UPC</th>
+					<th>IP UPC</th>
+					<th>CU UPC</th>
+					{{#if editMode}}
+					<th></th>
+					<th></th>
+					{{/if}}
+				</tr>
+			</thead>
+			<tbody>
+				{{#each material}}
+				<tr class="matRow {{selectedClass}}">
+					<td> {{materialNum}} </td>
+					<td> {{projectID}} </td>
+					<td></td>
+					<td></td>
+					<td></td>
+					{{#if editMode}}
+					<td><a href="#" type="button" data-toggle="modal" data-target=".updateMat"><span class="glyphicon glyphicon-pencil"></span></a></td>
+					<td><a href="#" type="button" data-action="task/matRemove"><span class="glyphicon glyphicon-trash"></span></a></td>
+					{{/if}}
+				</tr>
+				{{/each}}
+			</tbody>
+			</table>
+			</div>
+		</section>
+	<hr />
+</template>
+
+<!-- Add Material to a Project -->
+<template name="addMaterial">
+		<form>Create a material:
+        <input type="text" placeholder="material # here..." name="materialNum">
+    	</form>
+</template>
+
+
+<!-- Update Existing Material within a Project -->
+<template name="updateMaterial">
+<div class="modal fade updateMat" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form>
+      <div class="container">
+      	<h4>Update Material / UPC Information</h4>
+
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+</template>
+
+<!-- File Upload Control -->
+<template name="upload">
+  {{#unless uploading}}
+    <input type="file" name="uploadCSV">
+  {{else}}
+    <p><i class="fa fa-spin fa-refresh"></i> Uploading files...</p>
+  {{/unless}}
+</template>
+
